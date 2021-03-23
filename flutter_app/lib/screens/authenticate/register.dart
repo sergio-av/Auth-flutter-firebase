@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/services/auth.dart';
 
-class SignIn extends StatefulWidget {
+class Register extends StatefulWidget {
   final Function toggleView;
-  SignIn({this.toggleView});
+  Register({this.toggleView});
 
   @override
-  _SignInState createState() => _SignInState();
+  _RegisterState createState() => _RegisterState();
 }
 
-class _SignInState extends State<SignIn> {
+class _RegisterState extends State<Register> {
+//
   final AuthService _auth = AuthService();
   final _formkey = GlobalKey<FormState>();
 
@@ -24,11 +25,11 @@ class _SignInState extends State<SignIn> {
         appBar: AppBar(
           backgroundColor: Colors.brown[400],
           elevation: 0.0,
-          title: Text('Sign in'),
+          title: Text('Register'),
           actions: <Widget>[
             TextButton.icon(
               icon: Icon(Icons.person),
-              label: Text('Register'),
+              label: Text('Sing In'),
               onPressed: () {
                 widget.toggleView();
               },
@@ -60,20 +61,20 @@ class _SignInState extends State<SignIn> {
                       }),
                   SizedBox(height: 20.0),
                   ElevatedButton(
-                    child: Text(
-                      'Sign in',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onPressed: () async {
-                      if (_formkey.currentState.validate()) {
-                        dynamic result =
-                            await _auth.signInWithEmailAndPassword(email, pass);
-                        if (result == null) {
-                          setState(() => error = 'COULD NOT SIGN');
+                      child: Text(
+                        'Register',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () async {
+                        if (_formkey.currentState.validate()) {
+                          dynamic result = await _auth
+                              .registerWithEmailAndPassword(email, pass);
+                          if (result == null) {
+                            setState(
+                                () => error = 'Please insert a valid email');
+                          }
                         }
-                      }
-                    },
-                  )
+                      })
                 ],
               ),
             )));

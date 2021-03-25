@@ -1,6 +1,9 @@
-import 'package:firebase_core/firebase_core.dart';
+import 'dart:io';
+
 import 'package:flutter_app/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import 'package:http/http.dart' as http;
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -15,15 +18,39 @@ class AuthService {
     return _auth.authStateChanges().map(_userFromFirebaseUser);
   }
 
-  //sign in anon
-  Future sigInAnon() async {
+  //Peticion
+  void doPeticion() {
+    var user = _auth.currentUser;
+    Future<String> token = user.getIdToken();
+
+    final url =
+        'https://so0y5ln90d.execute-api.eu-central-1.amazonaws.com/authApi';
+    final uri = Uri.parse(url);
+    http.get(uri).then((res) {
+      print(res.statusCode);
+      print(user.email);
+      print(token);
+    });
+  }
+
+  //Obtener Token
+  Future<http.Response> fetchToken() async {
+    final user = _auth.currentUser;
+    String token = await user.getIdToken();
+
     try {
-      UserCredential result = await _auth.signInAnonymously();
-      User user = result.user;
-      return _userFromFirebaseUser(user);
+      final response = await http.get(
+          Uri.parse(
+              'https://so0y5ln90d.execute-api.eu-central-1.amazonaws.com/authApi'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ${token}'
+          });
+      print('Token : ${token}');
+      print(response);
     } catch (e) {
-      print(e.toString());
-      return null;
+      print(e);
     }
   }
 

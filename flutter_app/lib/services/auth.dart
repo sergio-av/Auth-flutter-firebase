@@ -48,6 +48,7 @@ class AuthService {
             'Authorization': 'Bearer ${token}'
           });
       print('Token : ${token}');
+      print(response.statusCode);
       print(response);
     } catch (e) {
       print(e);
